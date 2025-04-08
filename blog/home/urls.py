@@ -8,4 +8,5 @@ urlpatterns = [
     path('logout/', logout, name = 'logout'),
 
     path('profile/<str:username>/', profile, name = 'profile'),
+    path('profile/<str:username>/delete/', delete_acc, name = 'delete_acc')
 ]

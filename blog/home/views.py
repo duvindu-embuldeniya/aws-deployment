@@ -3,6 +3,7 @@ from .forms import UserRegistrationForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib import messages
 from django.contrib.auth.models import User, auth
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 
 def home(request):
     return render(request, 'home/index.html')
@@ -53,6 +54,7 @@ def logout(request):
     return redirect('home')
 
 
+@login_required
 def profile(request, username):
     current_user = User.objects.get(username = username)
     if request.user != current_user:
@@ -73,3 +75,20 @@ def profile(request, username):
 
     context = {'current_user':current_user, 'u_form':u_form, 'p_form':p_form}
     return render(request, 'home/profile.html', context)
+
+
+@login_required
+def delete_acc(request, username):
+    current_user = User.objects.get(username = username)
+    profile = current_user.profile
+    if request.user != current_user:
+        return HttpResponse("<h1>Forbidden 403</h1>")
+
+    if request.method == 'POST':
+        profile.delete()
+        messages.success(request, "Account Deleted Successfully")
+        return redirect('home')
+
+
+    context = {'current_user':current_user}
+    return render(request, 'home/delete_profile.html', context)

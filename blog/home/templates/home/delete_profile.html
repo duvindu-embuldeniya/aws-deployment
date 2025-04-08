@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+
+{% block content2 %}
+
+    
+    <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+            Are U Sure U Want To Delete '{{current_user.username}}'s profile :)?
+
+        <button type="submit">Delete</button>
+        &nbsp;&nbsp;
+        <a href="
+            {% if request.GET.back %}
+            {{request.GET.back}}
+            {% else %}
+            {% url 'home' %}
+            {% endif %}        
+        ">Back</a>
+    </form>
+
+{% endblock content2 %}

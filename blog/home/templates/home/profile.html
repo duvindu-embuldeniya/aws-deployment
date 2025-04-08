@@ -16,6 +16,8 @@
             {{p_form.as_p}}
 
         <button type="submit">Update</button>
+        &nbsp;&nbsp;
+        <a href="{% url 'delete_acc' current_user.username %}?back={{request.path}}">Delete</a>
     </form>
 
 {% endblock content2 %}
