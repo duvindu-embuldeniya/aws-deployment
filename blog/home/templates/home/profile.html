@@ -3,6 +3,19 @@
 
 {% block content2 %}
 
+    Username :- {{current_user.username}}
+    <br><br>
+    Email :- {{current_user.email}}
+    <br><br>
+    <img src="{{current_user.profile.img_url}}" alt="profile_pic" width="150px" height="150px">
+    
+    <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
 
+            {{u_form.as_p}}
+            {{p_form.as_p}}
+
+        <button type="submit">Update</button>
+    </form>
 
 {% endblock content2 %}

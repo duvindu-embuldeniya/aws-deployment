@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
-from .forms import UserRegistrationForm
+from .forms import UserRegistrationForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib import messages
 from django.contrib.auth.models import User, auth
+from django.http import HttpResponse
 
 def home(request):
     return render(request, 'home/index.html')
@@ -26,6 +27,9 @@ def register(request):
 
 
 def login(request):
+    if request.user.is_authenticated:
+        messages.info(request, 'You\'ve Already Loged-In!')
+        return redirect('home')
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -41,10 +45,31 @@ def login(request):
 
 
 def logout(request):
+    if not(request.user.is_authenticated):
+        messages.info(request, "You've Not Loged-In!")
+        return redirect('home')
     auth.logout(request)
     messages.success(request, 'Loged-Out Successfully!')
     return redirect('home')
 
 
-def profile(request):
-    pass
+def profile(request, username):
+    current_user = User.objects.get(username = username)
+    if request.user != current_user:
+        return HttpResponse("<h1>Forbidden 403</h1>")
+    u_form = UserUpdateForm(instance=current_user)
+    p_form = ProfileUpdateForm(instance=current_user.profile)
+
+    if request.method == 'POST':
+        u_form = UserUpdateForm(request.POST, instance=current_user)
+        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=current_user.profile)
+
+        if u_form.is_valid() and p_form.is_valid():
+            alt_user = u_form.save()
+            p_form.save()
+
+            messages.success(request, "Porfile Updated Successfully!")
+            return redirect(profile, username=alt_user.username)
+
+    context = {'current_user':current_user, 'u_form':u_form, 'p_form':p_form}
+    return render(request, 'home/profile.html', context)
