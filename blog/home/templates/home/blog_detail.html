@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+
+{% block content2 %}
+
+        <hr>
+            username :- {{blog.author.username}} <br>
+            title :- {{blog.title}} <br>
+            description :- {{blog.description}} <br>
+            Tags : - 
+            {% for tag in blog.tag_set.all %}
+                |&nbsp;{{tag.name}}
+            {% endfor %}
+        <hr>
+
+        <a href="
+            {% if request.GET.back %}
+            {{request.GET.back}}
+            {% else %}
+            {% url 'home' %}
+            {% endif %}
+        ">Back</a>
+
+
+
+{% endblock content2 %}

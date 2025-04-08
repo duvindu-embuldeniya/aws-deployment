@@ -4,9 +4,24 @@ from django.contrib import messages
 from django.contrib.auth.models import User, auth
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.views.generic import ListView
+from . models import Profile, Blog, Tag
 
-def home(request):
-    return render(request, 'home/index.html')
+
+class BlogListView(ListView):
+    model = Blog
+    template_name = 'home/index.html'
+    context_object_name = 'blogs'
+    paginate_by = 2
+    ordering = ['created']
+
+def blogDetail(request, pk):
+    blog = Blog.objects.get(pk = pk)
+    context = {'blog':blog}
+    return render(request, 'home/blog_detail.html', context)
+
+# def home(request):
+#     return render(request, 'home/index.html')
 
 
 def register(request):
