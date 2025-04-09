@@ -6,22 +6,45 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView
 from . models import Profile, Blog, Tag
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from . utils import search_blog
+
+# class BlogListView(ListView):
+#     model = Blog
+#     template_name = 'home/index.html'
+#     context_object_name = 'blogs'
+#     paginate_by = 2
+#     ordering = ['created']
 
 
-class BlogListView(ListView):
-    model = Blog
-    template_name = 'home/index.html'
-    context_object_name = 'blogs'
-    paginate_by = 2
-    ordering = ['created']
+
+def home(request):
+    
+    blogs,query_value = search_blog(request)
+
+    page = request.GET.get('page') if request.GET.get('page') else ''
+    result = 2
+
+    paginator = Paginator(blogs, result)
+
+    try:
+        blogs = paginator.page(page)
+    
+    except PageNotAnInteger as ex1:
+        blogs = paginator.page('1')
+    
+    except EmptyPage as ex2:
+        page = paginator.num_pages
+        blogs = paginator.page(page)
+
+    context = {'blogs':blogs, 'query_value':query_value}
+    return render(request, 'home/index.html', context)
+
 
 def blogDetail(request, pk):
     blog = Blog.objects.get(pk = pk)
     context = {'blog':blog}
     return render(request, 'home/blog_detail.html', context)
-
-# def home(request):
-#     return render(request, 'home/index.html')
 
 
 def register(request):
