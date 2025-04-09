@@ -16,3 +16,10 @@ for(let i=0; i < pages.length; i++){
     }
 }
 
+
+
+let closer = document.querySelector('.msg')
+
+setTimeout(function(){
+    closer.style.display = 'none';
+}, 2000)
